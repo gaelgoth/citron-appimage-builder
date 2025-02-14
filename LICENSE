@@ -1,0 +1,51 @@
+GNU GENERAL PUBLIC LICENSE
+Version 3, 29 June 2007
+
+Copyright (C) 2007 Free Software Foundation, Inc.
+Everyone is permitted to copy and distribute verbatim copies
+of this license document, but changing it is not allowed.
+
+### Preamble
+
+The GNU General Public License is a free, copyleft license for software and other kinds of works.
+
+The licenses for most software and other practical works are designed to take away your freedom to share and change the works. By contrast, the GNU General Public License is intended to guarantee your freedom to share and change all versions of a program--to make sure it remains free software for all its users. We, the Free Software Foundation, use the GNU General Public License for most of our software; it applies also to any other work released this way by its authors. You can apply it to your programs, too.
+
+### TERMS AND CONDITIONS
+
+#### 0. Definitions
+
+“This License” refers to version 3 of the GNU General Public License.
+
+“The Program” refers to any copyrightable work licensed under this License.
+
+“You” (or “your”) means an individual or entity exercising permissions granted by this License.
+
+#### 1. Source Code
+
+The “source code” for a work means the preferred form of the work for making modifications to it. “Object code” means any non-source form of a work.
+
+#### 2. Basic Permissions
+
+All rights granted under this License are granted for the term of the copyright on the Program, and are irrevocable provided the stated conditions are met. This License explicitly affirms your unlimited permission to run the unmodified Program.
+
+#### 3. Protecting Users' Legal Rights From Anti-Circumvention Law
+
+No covered work shall be deemed part of an effective technological measure under any applicable law fulfilling obligations under Article 11 of the WIPO treaty.
+
+#### 4. Conveying Verbatim Copies
+
+You may convey verbatim copies of the Program's source code as you receive it, in any medium, provided that you conspicuously and appropriately publish a copy of this License on each copy.
+
+#### 5. Conveying Modified Source Versions
+
+You may modify your copy or copies of the Program, and you may distribute such modifications under the terms of Section 4, provided that you also meet all of these conditions:
+(a) The modified work must carry prominent notices stating that you have changed the files and the date of any change.
+(b) You must license the entire work, as a whole, under this License.
+
+#### 6. Disclaimer of Warranty
+
+There is no warranty for the Program, to the extent permitted by applicable law. Except when otherwise stated in writing, the copyright holders and/or other parties provide the Program “as is” without warranty of any kind, either expressed or implied.
+
+For the full license text, visit: https://www.gnu.org/licenses/gpl-3.0.html
+
