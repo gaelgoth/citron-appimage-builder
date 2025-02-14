@@ -14,8 +14,8 @@ This repository contains a script to build Citron using an Arch Linux Docker con
 ## Usage
 1. Clone this repository:
    ```sh
-   git clone https://github.com/azazelv5/citron-arch-builder.git
-   cd citron-arch-builder
+   git clone https://github.com/azazelv5/citron-appimage-builder.git
+   cd citron-appimage-builder
    ```
 2. Run the batch script:
    ```sh
