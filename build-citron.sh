@@ -40,8 +40,8 @@ fi
 mkdir -p /root/Citron/build
 cd /root/Citron/build
 cmake .. -GNinja -DCITRON_USE_BUNDLED_VCPKG=ON -DCITRON_TESTS=OFF -DCITRON_USE_LLVM_DEMANGLE=OFF \
-    -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_CXX_FLAGS="-march=native -mtune=native" \
-    -DCMAKE_C_FLAGS="-march=native -mtune=native" -DUSE_DISCORD_PRESENCE=ON -DBUNDLE_SPEEX=ON
+    -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_CXX_FLAGS="-march=native -mtune=native -O3 -flto" \
+    -DCMAKE_C_FLAGS="-march=native -mtune=native -O3 -flto" -DUSE_DISCORD_PRESENCE=ON -DBUNDLE_SPEEX=ON
 ninja
 sudo ninja install
 
