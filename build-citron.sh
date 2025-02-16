@@ -21,20 +21,12 @@ CITRON_VERSION=${CITRON_VERSION:-master}
 
 echo "🛠️ Building Citron (Version: ${CITRON_VERSION})"
 
-# Clone or update Citron repo
-if [ -d "/root/Citron" ]; then
-    echo "🔄 Updating Citron repository..."
-    cd /root/Citron
-    git fetch --all
-    git reset --hard origin/master  # Ensure a clean state
-    git checkout ${CITRON_VERSION} || git checkout tags/${CITRON_VERSION}
-    git pull
-else
-    echo "📥 Cloning Citron repository..."
-    git clone --recursive https://git.citron-emu.org/Citron/Citron.git /root/Citron
-    cd /root/Citron
-    git checkout ${CITRON_VERSION} || git checkout tags/${CITRON_VERSION}
-fi
+# Clone
+echo "📥 Cloning Citron repository..."
+cd /root
+git clone --recursive https://git.citron-emu.org/Citron/Citron.git /root/Citron
+cd /root/Citron
+git checkout ${CITRON_VERSION} || git checkout tags/${CITRON_VERSION}
 
 # Build Citron
 mkdir -p /root/Citron/build
