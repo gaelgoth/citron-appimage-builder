@@ -5,14 +5,13 @@ This repository contains a script to build Citron using an Arch Linux Docker con
 ## Features
 
 - Uses Docker to provide a consistent build environment
-- Automatically removes old Docker images to prevent duplication
 - Outputs a Citron AppImage in the current working directory
 - Optional build optimizations (`-O3 -flto`)
 
 ## Requirements
 
-- [Docker](https://docs.docker.com/desktop/setup/install/windows-install/) installed on your system
-- Windows (for the provided batch script) or a manual setup for Linux/macOS
+- Windows 10/11 (for the provided batch script) or a manual setup for Linux/macOS
+- [Docker Desktop for Windows](https://docs.docker.com/desktop/setup/install/windows-install/) installed on your system
 
 ## Usage
 
@@ -21,11 +20,16 @@ This repository contains a script to build Citron using an Arch Linux Docker con
    git clone https://github.com/azazelv5/citron-appimage-builder.git
    cd citron-appimage-builder
    ```
+   Alternatively, you can download the repository as a zip file and extract it.
+
 2. Run the batch script:
    ```sh
    start_build_windows_wsl.bat
    ```
-3. The Citron AppImage will be created in the current directory.
+
+3. Ensure an active internet connection for downloading dependencies. The script will prompt you about disk space cleanup after the build.
+
+4. The Citron AppImage file will be created in the current directory.
 
 ### Examples
 
@@ -35,7 +39,7 @@ Modify the batch file accordingly:
   ```sh
   docker run --rm -v ${PWD}:/output citron-builder
   ```
-- Specific version:
+- Specific version (Tag or Branch name):
   ```sh
   docker run --rm -e CITRON_VERSION=v0.4-canary-refresh -v ${PWD}:/output citron-builder
   ```
