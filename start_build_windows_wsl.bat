@@ -41,7 +41,7 @@ IF NOT "%IMAGE_EXISTS%"=="" (
 docker build -t citron-builder .
 
 :: Run the container and create the AppImage
-@REM docker run --rm -v %CD%:/output citron-builder
+docker run --rm -v %CD%:/output citron-builder
 
 :: Other options
 @REM docker run --rm -e CITRON_VERSION=v0.4-canary-refresh -v %CD%:/output citron-builder
