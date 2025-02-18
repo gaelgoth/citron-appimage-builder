@@ -4,16 +4,21 @@ This repository contains a script to build Citron using an Arch Linux Docker con
 
 ## Features
 
-- Uses Docker to provide a consistent build environment
-- Outputs a Citron AppImage in the current working directory
-- Optional build optimizations (`-O3 -flto`)
+- Uses Docker to provide a consistent build environment.
+- Outputs a Citron AppImage in the current working directory.
+- Optional build optimizations (`-O3 -flto`).
 
 ## Requirements
 
-- Windows 10/11 (for the provided batch script) or a manual setup for Linux/macOS
-- [Docker Desktop for Windows](https://docs.docker.com/desktop/setup/install/windows-install/) installed on your system
+### Windows
+- [Docker Desktop for Windows](https://docs.docker.com/desktop/setup/install/windows-install/) installed and running on your system.
+
+### Linux / macOS
+- [Docker](https://docs.docker.com/get-docker/) installed.
 
 ## Usage
+
+### Windows
 
 1. Clone this repository:
    ```sh
@@ -31,21 +36,45 @@ This repository contains a script to build Citron using an Arch Linux Docker con
 
 4. The Citron AppImage file will be created in the current directory.
 
-### Examples
+### Linux / macOS
 
-Modify the batch file accordingly:
+1. Clone this repository:
+   ```sh
+   git clone https://github.com/azazelv5/citron-appimage-builder.git
+   cd citron-appimage-builder
+   ```
+   Alternatively, you can download the repository as a zip file and extract it.
+
+2. Build and run the Docker container:
+   ```sh
+   docker build -t citron-builder .
+   docker run --rm -v "$(pwd)":/output citron-builder
+   ```
+
+3. Ensure an active internet connection for downloading dependencies.
+
+4. The Citron AppImage file will be created in the current directory.
+
+5. (Optional) Remove the citron-builder image to save disk space:
+   ```sh
+   docker rmi -f citron-builder
+   ```
+
+## Options
+
+Modify the docker run command accordingly:
 
 - Default version (latest master):
   ```sh
-  docker run --rm -v ${PWD}:/output citron-builder
+  docker run --rm -v ${pwd}:/output citron-builder
   ```
 - Specific version (Tag or Branch name):
   ```sh
-  docker run --rm -e CITRON_VERSION=v0.4-canary-refresh -v ${PWD}:/output citron-builder
+  docker run --rm -e CITRON_VERSION=v0.4-canary-refresh -v ${pwd}:/output citron-builder
   ```
 - Enable optimizations (`-O3 -flto`):
   ```sh
-  docker run --rm -e ENABLE_OPTIMIZATIONS=ON -v ${PWD}:/output citron-builder
+  docker run --rm -e ENABLE_OPTIMIZATIONS=ON -v ${pwd}:/output citron-builder
   ```
   This enables additional compiler optimizations that may improve performance but increase build time.
 
