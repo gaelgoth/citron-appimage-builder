@@ -26,7 +26,11 @@ echo "🛠️ Building Citron (Version: ${CITRON_VERSION})"
 # Clone
 echo "📥 Cloning Citron repository..."
 cd /root
-git clone --recursive https://git.citron-emu.org/Citron/Citron.git /root/Citron
+if ! git clone --recursive https://git.citron-emu.org/Citron/Citron.git /root/Citron; then
+    echo "❌ Error: Failed to clone the Citron repository."
+    echo "🔎 Please check the repository availability or visit the official discord community for help: https://citron-emu.org/"
+    exit 1
+fi
 cd /root/Citron
 git checkout ${CITRON_VERSION} || git checkout tags/${CITRON_VERSION}
 
