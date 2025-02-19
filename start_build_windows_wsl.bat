@@ -47,8 +47,6 @@ docker run --rm -v %CD%:/output citron-builder
 @REM docker run --rm -e CITRON_VERSION=v0.4-canary-refresh -v %CD%:/output citron-builder
 @REM docker run --rm -e ENABLE_OPTIMIZATIONS=ON -v %CD%:/output citron-builder
 
-echo Citron AppImage created in %CD%!
-
 :: Ask the user if they want to delete the Docker image to save disk space (default to Yes)
 echo.
 echo ==================================================
