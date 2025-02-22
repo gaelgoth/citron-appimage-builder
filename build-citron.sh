@@ -11,10 +11,6 @@ set -e  # Exit on error
 # - Creates an AppImage package
 # - Saves the output to /output
 #
-# Usage:
-# - Default version (latest master): `docker run --rm -v ${PWD}:/output citron-builder`
-# - Specific version: `docker run --rm -e CITRON_VERSION=v0.4-canary-refresh -v ${PWD}:/output citron-builder`
-# - Enable optimizations: `docker run --rm -e ENABLE_OPTIMIZATIONS=ON -v ${PWD}:/output citron-builder`
 # ============================================
 
 # Set the Citron version (default to 'master' if not provided)
