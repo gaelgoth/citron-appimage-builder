@@ -6,7 +6,6 @@ This repository contains a script to build Citron using an Arch Linux Docker con
 
 - Uses Docker to provide a consistent build environment.
 - Outputs a Citron AppImage in the current working directory.
-- Optional build optimizations (`-O3 -flto`).
 
 ## Requirements
 
@@ -70,13 +69,8 @@ Modify the docker run command accordingly:
   ```
 - Specific version (Tag or Branch name):
   ```sh
-  docker run --rm -e CITRON_VERSION=v0.4-canary-refresh -v ${pwd}:/output citron-builder
+  docker run --rm -e CITRON_VERSION=v0.5-canary-refresh -v ${pwd}:/output citron-builder
   ```
-- Enable optimizations (`-O3 -flto`):
-  ```sh
-  docker run --rm -e ENABLE_OPTIMIZATIONS=ON -v ${pwd}:/output citron-builder
-  ```
-  This enables additional compiler optimizations that may improve performance but increase build time.
 
 ## Credits
 

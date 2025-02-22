@@ -44,8 +44,7 @@ docker build -t citron-builder .
 docker run --rm -v %CD%:/output citron-builder
 
 :: Other options
-@REM docker run --rm -e CITRON_VERSION=v0.4-canary-refresh -v %CD%:/output citron-builder
-@REM docker run --rm -e ENABLE_OPTIMIZATIONS=ON -v %CD%:/output citron-builder
+@REM docker run --rm -e CITRON_VERSION=v0.5-canary-refresh -v %CD%:/output citron-builder
 
 :: Ask the user if they want to delete the Docker image to save disk space (default to Yes)
 echo.

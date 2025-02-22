@@ -19,7 +19,6 @@ set -e  # Exit on error
 
 # Set the Citron version (default to 'master' if not provided)
 CITRON_VERSION=${CITRON_VERSION:-master}
-ENABLE_OPTIMIZATIONS=${ENABLE_OPTIMIZATIONS:-OFF}
 
 echo "🛠️ Building Citron (Version: ${CITRON_VERSION})"
 
@@ -38,20 +37,17 @@ git checkout ${CITRON_VERSION} || git checkout tags/${CITRON_VERSION}
 mkdir -p /root/Citron/build
 cd /root/Citron/build
 
-# Set optimization flags conditionally
-if [ "$ENABLE_OPTIMIZATIONS" = "ON" ]; then
-    echo "🔧 Optimization flags enabled"
-    CXX_FLAGS="-march=native -mtune=native -O3 -flto"
-    C_FLAGS="-march=native -mtune=native -O3 -flto"
-else
-    echo "⚙️ Optimization flags disabled"
-    CXX_FLAGS="-march=native -mtune=native"
-    C_FLAGS="-march=native -mtune=native"
-fi
+cmake .. -GNinja \
+  -DCITRON_ENABLE_LTO=ON \
+  -DCITRON_USE_BUNDLED_VCPKG=ON \
+  -DCITRON_TESTS=OFF \
+  -DCITRON_USE_LLVM_DEMANGLE=OFF \
+  -DCMAKE_INSTALL_PREFIX=/usr \
+  -DCMAKE_CXX_FLAGS="-march=native -mtune=native -Wno-error" \
+  -DCMAKE_C_FLAGS="-march=native -mtune=native" \
+  -DUSE_DISCORD_PRESENCE=OFF \
+  -DBUNDLE_SPEEX=ON
 
-cmake .. -GNinja -DCITRON_USE_BUNDLED_VCPKG=ON -DCITRON_TESTS=OFF -DCITRON_USE_LLVM_DEMANGLE=OFF \
-    -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_CXX_FLAGS="$CXX_FLAGS" \
-    -DCMAKE_C_FLAGS="$C_FLAGS" -DUSE_DISCORD_PRESENCE=ON -DBUNDLE_SPEEX=ON
 ninja
 sudo ninja install
 
