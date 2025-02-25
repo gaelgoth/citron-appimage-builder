@@ -41,10 +41,19 @@ IF NOT "%IMAGE_EXISTS%"=="" (
 docker build -t citron-builder .
 
 :: Run the container and create the AppImage
+:: Build latest version (master branch) with Steam Deck optimizations (default)
 docker run --rm -v %CD%:/output citron-builder
 
-:: Other options
+:: Other options:
+
+:: Build version v0.5-canary-refresh for Steam Deck (default)
 @REM docker run --rm -e CITRON_VERSION=v0.5-canary-refresh -v %CD%:/output citron-builder
+
+:: Build version v0.5-canary-refresh in release mode (native)
+@REM docker run --rm -e CITRON_VERSION=v0.5-canary-refresh -e CITRON_BUILD_MODE=release -v %CD%:/output citron-builder
+
+:: Build version v0.5-canary-refresh for older architectures
+@REM docker run --rm -e CITRON_VERSION=v0.5-canary-refresh -e CITRON_BUILD_MODE=compatibility -v %CD%:/output citron-builder
 
 :: Ask the user if they want to delete the Docker image to save disk space (default to Yes)
 echo.

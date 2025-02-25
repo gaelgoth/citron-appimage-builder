@@ -10,20 +10,48 @@ set -e  # Exit on error
 # - Builds Citron using CMake and Ninja
 # - Creates an AppImage package
 # - Saves the output to /output
-#
 # ============================================
+# # ============================================
 
 # Set the Citron version (default to 'master' if not provided)
 CITRON_VERSION=${CITRON_VERSION:-master}
+CITRON_BUILD_MODE=${CITRON_BUILD_MODE:-steamdeck}  # Default to SteamDeck build
 
-echo "🛠️ Building Citron (Version: ${CITRON_VERSION})"
+# Define build configurations
+case "$CITRON_BUILD_MODE" in
+  release)
+    CXX_FLAGS="-march=native -mtune=native -Wno-error"
+    C_FLAGS="-march=native -mtune=native"
+    ;;
+  steamdeck)
+    CXX_FLAGS="-march=znver2 -mtune=znver2 -Wno-error"
+    C_FLAGS="-march=znver2 -mtune=znver2"
+    ;;
+  compatibility)
+    CXX_FLAGS="-march=core2 -mtune=core2 -Wno-error"
+    C_FLAGS="-march=core2 -mtune=core2"
+    ;;
+  debug)
+    CXX_FLAGS="-march=native -mtune=native -Wno-error"
+    C_FLAGS="-march=native -mtune=native"
+    BUILD_TYPE=Debug
+    ;;
+  *)
+    echo "❌ Error: Unknown build mode '$CITRON_BUILD_MODE'. Use 'release', 'steamdeck', 'compatibility', or 'debug'."
+    exit 1
+    ;;
+esac
 
-# Clone
+BUILD_TYPE=${BUILD_TYPE:-Release}  # Default to Release mode
+
+echo "🛠️ Building Citron (Version: ${CITRON_VERSION}, Mode: ${CITRON_BUILD_MODE}, Build: ${BUILD_TYPE})"
+
+# Clone repository
 echo "📥 Cloning Citron repository..."
 cd /root
 if ! git clone --recursive https://git.citron-emu.org/Citron/Citron.git /root/Citron; then
     echo "❌ Error: Failed to clone the Citron repository."
-    echo "🔎 Please check the repository availability or visit the official discord community for help: https://citron-emu.org/"
+    echo "🔎 Please check the repository availability or visit the official Discord community for help: https://citron-emu.org/"
     exit 1
 fi
 cd /root/Citron
@@ -39,10 +67,11 @@ cmake .. -GNinja \
   -DCITRON_TESTS=OFF \
   -DCITRON_USE_LLVM_DEMANGLE=OFF \
   -DCMAKE_INSTALL_PREFIX=/usr \
-  -DCMAKE_CXX_FLAGS="-march=native -mtune=native -Wno-error" \
-  -DCMAKE_C_FLAGS="-march=native -mtune=native" \
+  -DCMAKE_CXX_FLAGS="$CXX_FLAGS" \
+  -DCMAKE_C_FLAGS="$C_FLAGS" \
   -DUSE_DISCORD_PRESENCE=OFF \
-  -DBUNDLE_SPEEX=ON
+  -DBUNDLE_SPEEX=ON \
+  -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 
 ninja
 sudo ninja install
@@ -63,9 +92,9 @@ chmod +x ./squashfs-root/AppRun
 
 # Set output file name
 if [[ "$CITRON_VERSION" == "master" ]]; then
-    OUTPUT_NAME="citron-nightly.AppImage"
+    OUTPUT_NAME="citron-nightly-${CITRON_BUILD_MODE}.AppImage"
 else
-    OUTPUT_NAME="citron-${CITRON_VERSION}.AppImage"
+    OUTPUT_NAME="citron-${CITRON_VERSION}-${CITRON_BUILD_MODE}.AppImage"
 fi
 
 # Move the most recently created AppImage to a shared output folder
