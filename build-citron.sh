@@ -16,6 +16,7 @@ set -e  # Exit on error
 # Set the Citron version (default to 'master' if not provided)
 CITRON_VERSION=${CITRON_VERSION:-master}
 CITRON_BUILD_MODE=${CITRON_BUILD_MODE:-steamdeck}  # Default to SteamDeck build
+OUTPUT_LINUX_BINARIES=${OUTPUT_LINUX_BINARIES:-false}  # Default to not output binaries
 
 # Define build configurations
 case "$CITRON_BUILD_MODE" in
@@ -76,6 +77,20 @@ cmake .. -GNinja \
 ninja
 sudo ninja install
 
+# Set output file name
+if [[ "$CITRON_VERSION" == "master" ]]; then
+    OUTPUT_NAME="citron-nightly-${CITRON_BUILD_MODE}"
+else
+    OUTPUT_NAME="citron-${CITRON_VERSION}-${CITRON_BUILD_MODE}"
+fi
+
+# Copy Linux binaries if enabled
+if [ "$OUTPUT_LINUX_BINARIES" = "true" ]; then
+    mkdir -p /output/linux-binaries-${OUTPUT_NAME}
+    cp -r /root/Citron/build/bin/* /output/linux-binaries-${OUTPUT_NAME}/
+    echo "✅ Linux binaries copied to /output/linux-binaries-${OUTPUT_NAME}"
+fi
+
 # Build the AppImage
 cd /root/Citron
 sudo /root/Citron/appimage-builder.sh citron /root/Citron/build
@@ -90,20 +105,13 @@ chmod +x appimagetool-x86_64.AppImage
 chmod +x ./squashfs-root/AppRun
 ./squashfs-root/AppRun AppDir
 
-# Set output file name
-if [[ "$CITRON_VERSION" == "master" ]]; then
-    OUTPUT_NAME="citron-nightly-${CITRON_BUILD_MODE}.AppImage"
-else
-    OUTPUT_NAME="citron-${CITRON_VERSION}-${CITRON_BUILD_MODE}.AppImage"
-fi
-
 # Move the most recently created AppImage to a shared output folder
 mkdir -p /output
 APPIMAGE_PATH=$(ls -t /root/Citron/build/deploy-linux/*.AppImage 2>/dev/null | head -n 1)
 
 if [[ -n "$APPIMAGE_PATH" ]]; then
-    mv -f "$APPIMAGE_PATH" "/output/${OUTPUT_NAME}"
-    echo "✅ Build complete! The AppImage is located in /output/${OUTPUT_NAME}"
+    mv -f "$APPIMAGE_PATH" "/output/${OUTPUT_NAME}.AppImage"
+    echo "✅ Build complete! The AppImage is located in /output/${OUTPUT_NAME}.AppImage"
 else
     echo "❌ Error: No .AppImage file found in /root/Citron/build/deploy-linux/"
     exit 1

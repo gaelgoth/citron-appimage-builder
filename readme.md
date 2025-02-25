@@ -8,6 +8,7 @@ This repository contains a script to build Citron using an Arch Linux Docker con
 - Supports multiple build modes (`release`, `steamdeck`, `compatibility`, `debug`).
 - Allows setting the Citron version and build mode via environment variables.
 - Outputs a Citron AppImage in the current working directory.
+- Option to output Linux binaries separately.
 
 ## Requirements
 
@@ -77,7 +78,12 @@ Modify the docker run command accordingly:
 
 - Specify a different build mode (`release`, `steamdeck`, `compatibility`, `debug`):
   ```sh
-  docker run --rm -e CITRON_BUILD_MODE=compatibility -v "$(pwd)":/output citron-builder
+  docker run --rm -e CITRON_BUILD_MODE=compatibility -e CITRON_VERSION=v0.5-canary-refresh -v "$(pwd)":/output citron-builder
+  ```
+  
+- Enable output of Linux binaries:
+  ```sh
+  docker run --rm -e OUTPUT_LINUX_BINARIES=true -v ${pwd}:/output citron-builder
   ```
 
 ## Output Naming

@@ -55,6 +55,9 @@ docker run --rm -v %CD%:/output citron-builder
 :: Build version v0.5-canary-refresh for older architectures
 @REM docker run --rm -e CITRON_VERSION=v0.5-canary-refresh -e CITRON_BUILD_MODE=compatibility -v %CD%:/output citron-builder
 
+:: Output linux binaries to separate folder
+@REM docker run --rm -e OUTPUT_LINUX_BINARIES=true -v %CD%:/output citron-builder
+
 :: Ask the user if they want to delete the Docker image to save disk space (default to Yes)
 echo.
 echo ==================================================
