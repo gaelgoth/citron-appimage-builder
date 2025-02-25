@@ -6,7 +6,7 @@ This repository contains a script to build Citron using an Arch Linux Docker con
 
 - Uses Docker to provide a consistent build environment.
 - Supports multiple build modes (`release`, `steamdeck`, `compatibility`, `debug`).
-- Allows setting the Citron version and build mode via environment variables.
+- Included Windows batch file for automated start with interactive prompt for all options.
 - Outputs a Citron AppImage in the current working directory.
 - Option to output Linux binaries separately.
 
@@ -34,9 +34,11 @@ This repository contains a script to build Citron using an Arch Linux Docker con
    start_build_windows_wsl.bat
    ```
 
-3. Ensure an active internet connection for downloading dependencies. The script will prompt you about disk space cleanup after the build.
+3. The script will prompt you about build options and disk cleanup.
 
-4. The Citron AppImage file will be created in the current directory.
+4. Ensure an active internet connection for downloading dependencies.
+
+5. The Citron AppImage file will be created in the current directory.
 
 ### Linux / macOS
 
@@ -83,7 +85,7 @@ Modify the docker run command accordingly:
   
 - Enable output of Linux binaries:
   ```sh
-  docker run --rm -e OUTPUT_LINUX_BINARIES=true -v ${pwd}:/output citron-builder
+  docker run --rm -e OUTPUT_LINUX_BINARIES=true -v "${pwd}":/output citron-builder
   ```
 
 ## Output Naming

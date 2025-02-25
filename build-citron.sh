@@ -47,6 +47,14 @@ BUILD_TYPE=${BUILD_TYPE:-Release}  # Default to Release mode
 
 echo "🛠️ Building Citron (Version: ${CITRON_VERSION}, Mode: ${CITRON_BUILD_MODE}, Build: ${BUILD_TYPE})"
 
+# Check if CITRON_VERSION exists remotely
+echo "🔎 Checking if version ${CITRON_VERSION} exists on the remote repository..."
+if ! git ls-remote --exit-code --refs https://git.citron-emu.org/Citron/Citron.git "refs/tags/${CITRON_VERSION}" && ! git ls-remote --exit-code --refs https://git.citron-emu.org/Citron/Citron.git "refs/heads/${CITRON_VERSION}"; then
+    echo "❌ Error: The specified version or branch ${CITRON_VERSION} does not exist in the remote repository."
+    echo "🔎 Please check the version or branch name and try again."
+    exit 1
+fi
+
 # Clone repository
 echo "📥 Cloning Citron repository..."
 cd /root
