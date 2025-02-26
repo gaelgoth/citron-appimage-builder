@@ -1,3 +1,4 @@
+*.tar.zst
 *.AppImage
 *.Dockerfile
 /linux-binaries*

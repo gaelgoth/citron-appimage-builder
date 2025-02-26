@@ -1,6 +1,6 @@
 @echo off
 :: Title: Citron AppImage Build Windows Script
-:: Description: Builds and runs the Citron container to create an AppImage.
+:: Description: Builds and runs the Arch Linux docker container to create a Citron AppImage.
 
 :: Check if Docker is installed
 echo Checking for Docker installation...
@@ -82,6 +82,22 @@ if "%BUILD_MODE_CHOICE%"=="1" (
     set CITRON_BUILD_MODE=steamdeck
 )
 
+:: Ask user if they want to cache the Git repository for subsequent builds
+echo ========================================================
+echo   Do you want to cache the Git repository for 
+echo   subsequent builds? (This may speed up builds but 
+echo   will consume around 1 GB of disk space.)
+echo   1. Yes
+echo   2. [Default] No
+echo ========================================================
+set /p CACHE_REPO="Enter choice (1/[2]): "
+if "%CACHE_REPO%"=="1" (
+    set USE_CACHE=true
+) else (
+    echo Defaulting to No.
+    set USE_CACHE=false
+)
+
 :: Ask user if they want to output Linux binaries
 echo ========================================================
 echo   Do you want to output Linux binaries?
@@ -91,8 +107,6 @@ echo ========================================================
 set /p OUTPUT_BINARIES="Enter choice (1/[2]): "
 if "%OUTPUT_BINARIES%"=="1" (
     set OUTPUT_LINUX_BINARIES=true
-) else if "%OUTPUT_BINARIES%"=="2" (
-    set OUTPUT_LINUX_BINARIES=false
 ) else (
     echo Defaulting to No.
     set OUTPUT_LINUX_BINARIES=false
@@ -102,7 +116,7 @@ if "%OUTPUT_BINARIES%"=="1" (
 docker build -t citron-builder .
 
 :: Build the container with the selected options
-docker run --rm -e CITRON_VERSION=%CITRON_VERSION% -e CITRON_BUILD_MODE=%CITRON_BUILD_MODE% -e OUTPUT_LINUX_BINARIES=%OUTPUT_LINUX_BINARIES% -v %CD%:/output citron-builder
+docker run --rm -e CITRON_VERSION=%CITRON_VERSION% -e CITRON_BUILD_MODE=%CITRON_BUILD_MODE% -e OUTPUT_LINUX_BINARIES=%OUTPUT_LINUX_BINARIES% -e USE_CACHE=%USE_CACHE% -v %CD%:/output citron-builder
 
 :: Ask the user if they want to delete the Docker image to save disk space (default to Yes)
 echo.
@@ -128,6 +142,33 @@ if /I "%DELETE_IMAGE%"=="Y" (
     echo   citron-builder image kept  
     echo ================================
     echo.
+)
+
+:: Ask the user if they want to delete the cached Git repository
+if exist citron.tar.zst (
+    echo.
+    echo ==================================================
+    echo   Do you want to delete the cached repository 
+    echo   file citron.tar.zst to free up space? (y/[N])
+    echo ==================================================
+    echo.
+    set /p DELETE_CACHE="Enter choice: "
+    if /I "%DELETE_CACHE%"=="" set DELETE_CACHE=N
+
+    if /I "%DELETE_CACHE%"=="Y" (
+        echo.
+        echo ================================
+        echo   Deleting cached repository...  
+        echo ================================
+        del /Q citron.tar.zst
+        echo citron.tar.zst deleted.
+    ) else (
+        echo.
+        echo ================================
+        echo   Cached repository kept.  
+        echo ================================
+        echo.
+    )
 )
 
 pause

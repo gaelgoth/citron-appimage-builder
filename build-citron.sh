@@ -17,6 +17,7 @@ set -e  # Exit on error
 CITRON_VERSION=${CITRON_VERSION:-master}
 CITRON_BUILD_MODE=${CITRON_BUILD_MODE:-steamdeck}  # Default to SteamDeck build
 OUTPUT_LINUX_BINARIES=${OUTPUT_LINUX_BINARIES:-false}  # Default to not output binaries
+USE_CACHE=${USE_CACHE:-false}  # Default to not using cache
 
 # Define build configurations
 case "$CITRON_BUILD_MODE" in
@@ -47,28 +48,67 @@ BUILD_TYPE=${BUILD_TYPE:-Release}  # Default to Release mode
 
 echo "🛠️ Building Citron (Version: ${CITRON_VERSION}, Mode: ${CITRON_BUILD_MODE}, Build: ${BUILD_TYPE})"
 
-# Check if CITRON_VERSION exists remotely
-echo "🔎 Checking if version ${CITRON_VERSION} exists on the remote repository..."
-if ! git ls-remote --exit-code --refs https://git.citron-emu.org/Citron/Citron.git "refs/tags/${CITRON_VERSION}" && ! git ls-remote --exit-code --refs https://git.citron-emu.org/Citron/Citron.git "refs/heads/${CITRON_VERSION}"; then
-    echo "❌ Error: The specified version or branch ${CITRON_VERSION} does not exist in the remote repository."
-    echo "🔎 Please check the version or branch name and try again."
+# Check if CITRON_VERSION exists on the remote repository
+CITRON_REPO="https://git.citron-emu.org/Citron/Citron.git"
+
+echo "🔎 Checking if version '${CITRON_VERSION}' exists in the remote repository..."
+
+if ! git ls-remote --exit-code --refs "$CITRON_REPO" "refs/tags/${CITRON_VERSION}" "refs/heads/${CITRON_VERSION}" > /dev/null; then
+    echo "❌ Error: The specified version or branch '${CITRON_VERSION}' does not exist in the remote repository."
+    echo "🔎 Please verify the version or branch name and try again."
     exit 1
+fi
+echo "✅ Version '${CITRON_VERSION}' exists in the remote repository."
+
+# Set output and working directories
+OUTPUT_DIR="/output"
+mkdir -p "${OUTPUT_DIR}"
+
+WORKING_DIR="/root"
+cd "$WORKING_DIR"
+
+CACHE_FILE="${OUTPUT_DIR}/citron.tar.zst"
+CLONE_DIR="${WORKING_DIR}/Citron"
+
+# Clone or use existing cached repository
+if [ "$USE_CACHE" = "true" ] && [ -f "$CACHE_FILE" ]; then
+    echo "📥 Using cached repository citron.tar.zst..."
+    cp --preserve=all "$CACHE_FILE" "$WORKING_DIR/"
+    
+    # Extract the cached repository
+    tar --use-compress-program=zstd -xf citron.tar.zst -C "$WORKING_DIR"
+
+    cd "$CLONE_DIR"
+
+    # Update the repository to the latest commit of the given version
+    git fetch origin
+    if ! git reset --hard "origin/${CITRON_VERSION}"; then
+        echo "⚠️ Warning: Failed to reset to origin/${CITRON_VERSION}, trying tags/${CITRON_VERSION}..."
+        git checkout "tags/${CITRON_VERSION}"
+    fi
+else
+    echo "📥 Cloning Citron repository..."
+    if ! git clone --recursive "$CITRON_REPO" "$CLONE_DIR"; then
+        echo "❌ Error: Failed to clone the Citron repository."
+        exit 1
+    fi
+
+    cd "$CLONE_DIR"
+    git checkout "${CITRON_VERSION}" || git checkout "tags/${CITRON_VERSION}"
+
+    # Cache the repository for future builds if USE_CACHE=true
+    cd "$WORKING_DIR"
+    if [ "$USE_CACHE" = "true" ]; then
+        echo "💾 Caching repository to file citron.tar.zst..."
+        tar --use-compress-program=zstd -cf "$CACHE_FILE" -C "$WORKING_DIR" Citron
+    fi
 fi
 
-# Clone repository
-echo "📥 Cloning Citron repository..."
-cd /root
-if ! git clone --recursive https://git.citron-emu.org/Citron/Citron.git /root/Citron; then
-    echo "❌ Error: Failed to clone the Citron repository."
-    echo "🔎 Please check the repository availability or visit the official Discord community for help: https://citron-emu.org/"
-    exit 1
-fi
-cd /root/Citron
-git checkout ${CITRON_VERSION} || git checkout tags/${CITRON_VERSION}
+echo "✅ Repository is ready at ${CLONE_DIR}"
 
 # Build Citron
-mkdir -p /root/Citron/build
-cd /root/Citron/build
+mkdir -p ${WORKING_DIR}/Citron/build
+cd ${WORKING_DIR}/Citron/build
 
 cmake .. -GNinja \
   -DCITRON_ENABLE_LTO=ON \
@@ -94,18 +134,18 @@ fi
 
 # Copy Linux binaries if enabled
 if [ "$OUTPUT_LINUX_BINARIES" = "true" ]; then
-    mkdir -p /output/linux-binaries-${OUTPUT_NAME}
-    cp -r /root/Citron/build/bin/* /output/linux-binaries-${OUTPUT_NAME}/
-    echo "✅ Linux binaries copied to /output/linux-binaries-${OUTPUT_NAME}"
+    mkdir -p ${OUTPUT_DIR}/linux-binaries-${OUTPUT_NAME}
+    cp -r ${WORKING_DIR}/Citron/build/bin/* ${OUTPUT_DIR}/linux-binaries-${OUTPUT_NAME}/
+    echo "✅ Linux binaries copied to ${OUTPUT_DIR}/linux-binaries-${OUTPUT_NAME}"
 fi
 
 # Build the AppImage
-cd /root/Citron
-sudo /root/Citron/appimage-builder.sh citron /root/Citron/build
+cd ${WORKING_DIR}/Citron
+sudo ${WORKING_DIR}/Citron/appimage-builder.sh citron ${WORKING_DIR}/Citron/build
 
 # Prepare AppImage deployment
-cd /root/Citron/build/deploy-linux
-sudo cp /usr/lib/libSDL3.so* /root/Citron/build/deploy-linux/AppDir/usr/lib/
+cd ${WORKING_DIR}/Citron/build/deploy-linux
+sudo cp /usr/lib/libSDL3.so* ${WORKING_DIR}/Citron/build/deploy-linux/AppDir/usr/lib/
 sudo wget https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
 chmod +x appimagetool-x86_64.AppImage
 # Workaround for lack of FUSE support in WSL
@@ -113,14 +153,13 @@ chmod +x appimagetool-x86_64.AppImage
 chmod +x ./squashfs-root/AppRun
 ./squashfs-root/AppRun AppDir
 
-# Move the most recently created AppImage to a shared output folder
-mkdir -p /output
-APPIMAGE_PATH=$(ls -t /root/Citron/build/deploy-linux/*.AppImage 2>/dev/null | head -n 1)
+# Move the most recently created AppImage to a fresh output folder
+APPIMAGE_PATH=$(ls -t ${WORKING_DIR}/Citron/build/deploy-linux/*.AppImage 2>/dev/null | head -n 1)
 
 if [[ -n "$APPIMAGE_PATH" ]]; then
-    mv -f "$APPIMAGE_PATH" "/output/${OUTPUT_NAME}.AppImage"
-    echo "✅ Build complete! The AppImage is located in /output/${OUTPUT_NAME}.AppImage"
+    mv -f "$APPIMAGE_PATH" "${OUTPUT_DIR}/${OUTPUT_NAME}.AppImage"
+    echo "✅ Build complete! The AppImage is located in ${OUTPUT_DIR}/${OUTPUT_NAME}.AppImage"
 else
-    echo "❌ Error: No .AppImage file found in /root/Citron/build/deploy-linux/"
+    echo "❌ Error: No .AppImage file found in ${WORKING_DIR}/Citron/build/deploy-linux/"
     exit 1
 fi

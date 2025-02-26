@@ -9,6 +9,7 @@ This repository contains a script to build Citron using an Arch Linux Docker con
 - Included Windows batch file for automated start with interactive prompt for all options.
 - Outputs a Citron AppImage in the current working directory.
 - Option to output Linux binaries separately.
+- Option to cache the Citron Git repository for subsequent builds.
 
 ## Requirements
 
@@ -86,6 +87,11 @@ Modify the docker run command accordingly:
 - Enable output of Linux binaries:
   ```sh
   docker run --rm -e OUTPUT_LINUX_BINARIES=true -v "${pwd}":/output citron-builder
+  ```
+
+- Enable cache of Citron Git repository to speed up subsequent builds:
+  ```sh
+  docker run --rm -e USE_CACHE=true -v "${pwd}":/output citron-builder
   ```
 
 ## Output Naming
