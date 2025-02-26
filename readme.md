@@ -19,6 +19,19 @@ This repository contains a script to build Citron using an Arch Linux Docker con
 ### Linux / macOS
 - [Docker](https://docs.docker.com/get-docker/) installed.
 
+**Note for users on ARM-based devices (e.g., macOS M1/M2, Raspberry Pi, AWS Graviton, or similar ARM64 platforms):** If you encounter issues during the build process, it may be due to architecture incompatibilities. Try one of the following solutions:
+
+1. Use an ARM64-compatible Docker image by specifying the platform explicitly:
+   ```sh
+   docker build --platform=linux/arm64 -t citron-builder .
+   docker run --platform=linux/arm64 --rm -v "$(pwd)":/output citron-builder
+   ```
+2. Install Rosetta 2 (for macOS) and run the container in x86_64 emulation mode:
+   ```sh
+   softwareupdate --install-rosetta
+   docker run --platform=linux/amd64 --rm -v "$(pwd)":/output citron-builder
+   ```
+
 ## Usage
 
 ### Windows
