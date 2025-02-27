@@ -1,6 +1,6 @@
 # Citron Docker Builder
 
-This repository contains a script to build Citron using an Arch Linux Docker container. It automates the process of setting up a clean environment and generating a Citron AppImage for Steam Deck with support for multiple build modes.
+This repository contains a script to build [Citron](https://git.citron-emu.org/Citron/Citron) using an Arch Linux Docker container. It automates the process of setting up a clean environment and generating a Citron AppImage for Steam Deck with support for multiple build modes.
 
 ## Features
 
@@ -80,29 +80,29 @@ This repository contains a script to build Citron using an Arch Linux Docker con
 
 ## Options
 
-Modify the docker run command accordingly:
+Modify the docker run command accordingly, depending on your needs:
 
-- Default version (latest master) with SteamDeck optimizations build mode:
+- Use the default command for the latest Citron build optimized for Steam Deck:
   ```sh
   docker run --rm -v "$(pwd)":/output citron-builder
   ```
 
-- Specific version (Tag or Branch name) with SteamDeck optimizations build mode:
+- Specify a version tag or branch name if you need a specific release:
   ```sh
   docker run --rm -e CITRON_VERSION=v0.5-canary-refresh -v "$(pwd)":/output citron-builder
   ```
 
-- Specify a different build mode (`release`, `steamdeck`, `compatibility`, `debug`):
+- Choose a different [build mode](https://git.citron-emu.org/Citron/Citron/wiki/Building-For-Linux#building-citron) (`release`, `steamdeck`, `compatibility`, `debug`):
   ```sh
   docker run --rm -e CITRON_BUILD_MODE=compatibility -e CITRON_VERSION=v0.5-canary-refresh -v "$(pwd)":/output citron-builder
   ```
   
-- Enable output of Linux binaries:
+- Enable Linux binary output if you need separate non-AppImage executables:
   ```sh
   docker run --rm -e OUTPUT_LINUX_BINARIES=true -v "${pwd}":/output citron-builder
   ```
 
-- Enable cache of Citron Git repository to speed up subsequent builds:
+- Use cache options to speed up subsequent builds by preserving Citron's source repository between runs:
   ```sh
   docker run --rm -e USE_CACHE=true -v "${pwd}":/output citron-builder
   ```
@@ -125,5 +125,5 @@ This script was created with the help of the [Citron Wiki](https://git.citron-em
 
 ## License
 
-This project is licensed under the GNU GENERAL PUBLIC LICENSE. See the LICENSE file for details.
+This project is licensed under the GNU GENERAL PUBLIC LICENSE. See the [LICENSE](./LICENSE) file for details.
 
