@@ -2,14 +2,14 @@
 set -e  # Exit on error
 
 # ============================================
-# Citron Build Script for Docker with WSL
+# Citron Build Script
 # ============================================
 # This script:
 # - Clones or updates the Citron repository
 # - Checks out a specific version (default: master)
 # - Builds Citron using CMake and Ninja
 # - Creates an AppImage package
-# - Saves the output to /output
+# - Saves the output to OUTPUT_DIR
 # ============================================
 # # ============================================
 
@@ -18,6 +18,11 @@ CITRON_VERSION=${CITRON_VERSION:-master}
 CITRON_BUILD_MODE=${CITRON_BUILD_MODE:-steamdeck}  # Default to SteamDeck build
 OUTPUT_LINUX_BINARIES=${OUTPUT_LINUX_BINARIES:-false}  # Default to not output binaries
 USE_CACHE=${USE_CACHE:-false}  # Default to not using cache
+
+# Set output and working directories
+OUTPUT_DIR=${OUTPUT_DIR:-"/output"}
+mkdir -p "${OUTPUT_DIR}"
+WORKING_DIR=${WORKING_DIR:-"/root"}
 
 # Define build configurations
 case "$CITRON_BUILD_MODE" in
@@ -60,11 +65,6 @@ if ! git ls-remote --exit-code --refs "$CITRON_REPO" "refs/tags/${CITRON_VERSION
 fi
 echo "✅ Version '${CITRON_VERSION}' exists in the remote repository."
 
-# Set output and working directories
-OUTPUT_DIR="/output"
-mkdir -p "${OUTPUT_DIR}"
-
-WORKING_DIR="/root"
 cd "$WORKING_DIR"
 
 CACHE_FILE="${OUTPUT_DIR}/citron.tar.zst"
@@ -106,6 +106,11 @@ fi
 
 echo "✅ Repository is ready at ${CLONE_DIR}"
 
+# Get the short hash of the current commit
+cd "$CLONE_DIR"
+GIT_COMMIT_HASH=$(git rev-parse --short HEAD)
+TIMESTAMP=$(date +"%Y%m%d-%H%M%S")
+
 # Build Citron
 mkdir -p ${WORKING_DIR}/Citron/build
 cd ${WORKING_DIR}/Citron/build
@@ -127,7 +132,7 @@ sudo ninja install
 
 # Set output file name
 if [[ "$CITRON_VERSION" == "master" ]]; then
-    OUTPUT_NAME="citron-nightly-${CITRON_BUILD_MODE}"
+    OUTPUT_NAME="citron-nightly-${CITRON_BUILD_MODE}-${TIMESTAMP}-${GIT_COMMIT_HASH}"
 else
     OUTPUT_NAME="citron-${CITRON_VERSION}-${CITRON_BUILD_MODE}"
 fi

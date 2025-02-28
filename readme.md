@@ -110,12 +110,12 @@ Modify the docker run command accordingly, depending on your needs:
 ## Output Naming
 
 The generated AppImage filename will follow this format:
-- **Latest builds:** `citron-nightly-<build_mode>.AppImage`
+- **Latest builds:** `citron-nightly-<build_mode>-<timestamp>-<commit_hash>.AppImage`
 - **Versioned builds:** `citron-<version>-<build_mode>.AppImage`
 
 For example:
 ```sh
-citron-nightly-steamdeck.AppImage
+citron-nightly-steamdeck-20250228-153045-abcdefg.AppImage
 citron-v0.5-canary-refresh-release.AppImage
 ```
 
