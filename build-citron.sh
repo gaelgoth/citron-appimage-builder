@@ -128,7 +128,7 @@ cmake .. -GNinja \
   -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 
 ninja
-sudo ninja install
+ninja install
 
 # Set output file name
 if [[ "$CITRON_VERSION" == "master" ]]; then
@@ -146,12 +146,12 @@ fi
 
 # Build the AppImage
 cd ${WORKING_DIR}/Citron
-sudo ${WORKING_DIR}/Citron/appimage-builder.sh citron ${WORKING_DIR}/Citron/build
+${WORKING_DIR}/Citron/appimage-builder.sh citron ${WORKING_DIR}/Citron/build
 
 # Prepare AppImage deployment
 cd ${WORKING_DIR}/Citron/build/deploy-linux
-sudo cp /usr/lib/libSDL3.so* ${WORKING_DIR}/Citron/build/deploy-linux/AppDir/usr/lib/
-sudo wget https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
+cp /usr/lib/libSDL3.so* ${WORKING_DIR}/Citron/build/deploy-linux/AppDir/usr/lib/
+wget https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
 chmod +x appimagetool-x86_64.AppImage
 # Workaround for lack of FUSE support in WSL
 ./appimagetool-x86_64.AppImage --appimage-extract

@@ -2,3 +2,4 @@
 *.AppImage
 *.Dockerfile
 /linux-binaries*
+/workdir
