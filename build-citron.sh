@@ -79,7 +79,8 @@ if [ "$USE_CACHE" = "true" ] && [ -f "$CACHE_FILE" ]; then
     tar --use-compress-program=zstd -xf citron.tar.zst -C "$WORKING_DIR"
 
     cd "$CLONE_DIR"
-
+    git config --global --add safe.directory "$CLONE_DIR"
+    
     # Update the repository to the latest commit of the given version
     git fetch origin
     if ! git reset --hard "origin/${CITRON_VERSION}"; then

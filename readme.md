@@ -1,16 +1,16 @@
 # Citron AppImage Builder
 
-This repository contains scripts to build [Citron](https://git.citron-emu.org/Citron/Citron) using either an Arch Linux Docker container or a Distrobox container for Steam Deck. It automates the process of setting up a clean environment and generating a Citron AppImage with support for multiple build modes.
+This repository contains scripts to build [Citron](https://git.citron-emu.org/Citron/Citron) using either an Arch Linux Docker container or a Podman container for Steam Deck, with Podman being the preferred method for Steam Deck users due to its integration with SteamOS. It automates the process of setting up a clean environment and generating a Citron AppImage with support for multiple build modes.
 
 ## Features
 
-- Uses Docker or Distrobox to provide a consistent build environment.
+- Uses Docker or Podman to provide a consistent build environment.
 - Supports multiple build modes (`release`, `steamdeck`, `compatibility`, `debug`).
 - Included Windows batch file for automated start with interactive prompt for all options.
 - Outputs a Citron AppImage in the current working directory.
 - Option to output Linux binaries separately.
 - Option to cache the Citron Git repository for subsequent builds.
-- Dedicated Steam Deck script (`start_build_steamdeck_distrobox.sh`) for easier execution on Steam Deck.
+- Dedicated Steam Deck script (`start_build_steamdeck_podman.sh`) for easier execution on Steam Deck.
 
 ## Requirements
 
@@ -20,16 +20,16 @@ This repository contains scripts to build [Citron](https://git.citron-emu.org/Ci
 
 ### Steam Deck
 
-- SteamOS 3.5+ with [Distrobox](https://github.com/89luca89/distrobox) preinstalled.
-- Sufficient disk space (~5GB for build process).
+- SteamOS 3.5+ with [Podman](https://podman.io/) pre-installed.
+- Sufficient disk space (\~5GB for build process).
 
 ### Linux / macOS
 
-- [Docker](https://docs.docker.com/get-docker/) installed.
+- [Docker](https://docs.docker.com/get-docker/)  installed.
 
 **Note for users on ARM-based devices (e.g., macOS M1/M2, Raspberry Pi, AWS Graviton, or similar ARM64 platforms):** If you encounter issues during the build process, it may be due to architecture incompatibilities. Try one of the following solutions:
 
-1. Use an ARM64-compatible Docker image by specifying the platform explicitly:
+1. Use an ARM64-compatible container image by specifying the platform explicitly:
    ```sh
    docker build --platform=linux/arm64 -t citron-builder .
    docker run --platform=linux/arm64 --rm -v "$(pwd)":/output citron-builder
@@ -93,42 +93,53 @@ This repository contains scripts to build [Citron](https://git.citron-emu.org/Ci
    docker rmi -f citron-builder
    ```
 
-### Steam Deck (Distrobox)
+### Steam Deck (Podman)
 
 1. Switch to [Desktop Mode](https://help.steampowered.com/en/faqs/view/671A-4453-E8D2-323C).
 
 2. Open a terminal (Konsole is the default terminal app).
 
 3. Ensure you are in your home directory:
+
    ```sh
    cd ~
    ```
 
 4. Clone this repository:
+
    ```sh
    git clone https://github.com/azazelv5/citron-appimage-builder.git
+   ```
+   ```sh
    cd citron-appimage-builder
    ```
 
 5. Make the script executable:
+
    ```sh
-   chmod +x start_build_steamdeck_distrobox.sh
+   chmod +x start_build_steamdeck_podman.sh
    ```
 
 6. Run the Steam Deck build script:
+
    ```sh
-   ./start_build_steamdeck_distrobox.sh
+   ./start_build_steamdeck_podman.sh
    ```
 
 7. Follow the on-screen prompts to select your build mode and Citron version.
 
-8. The Citron AppImage file will be created in the current directory.
+8. Keep your Deck cool. It might take a while.
+
+9. The Citron AppImage file will be created in the current directory.
+
+10. The script will prompt you about disk cleanup.
 
 ## Options (Docker)
 
-For users running Linux or macOS, you can modify the Docker run command accordingly:
+For users running Linux or macOS, you can modify the docker run command accordingly:
 
 - Use the default command for the latest Citron build optimized for Steam Deck:
+
   ```sh
   docker run --rm -v "$(pwd)":/output citron-builder
   ```
