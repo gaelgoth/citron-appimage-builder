@@ -102,5 +102,3 @@ if [[ -f citron.tar.zst ]]; then
         rm -f citron.tar.zst
     fi
 fi
-
-echo "Build process completed."
