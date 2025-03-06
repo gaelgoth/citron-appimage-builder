@@ -15,12 +15,6 @@ fi
 # Define image name
 IMAGE_NAME="localhost/citron-builder"
 
-# Check if the Podman image exists
-if podman image exists "$IMAGE_NAME"; then
-    echo "Removing existing $IMAGE_NAME image..."
-    podman rmi -f "$IMAGE_NAME"
-fi
-
 # Ask user for version
 echo "========================================"
 echo "  Choose the version to build:"
