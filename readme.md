@@ -148,7 +148,7 @@ For users running Docker in Linux or macOS, you can modify the Docker run comman
   docker run --rm -v "$(pwd)":/output citron-builder
   ```
 
-- Specify a version tag or branch name if you need a specific release:
+- Specify a version tag, branch name or commit hash if you need a specific release:
 
   ```sh
   docker run --rm -e CITRON_VERSION=v0.5-canary-refresh -v "$(pwd)":/output citron-builder
