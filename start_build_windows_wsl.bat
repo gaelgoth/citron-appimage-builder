@@ -29,14 +29,6 @@ if %ERRORLEVEL% NEQ 0 (
     exit /b
 )
 
-:: Check if the Docker image exists
-FOR /F "tokens=* USEBACKQ" %%i IN (`docker images -q citron-builder`) DO SET IMAGE_EXISTS=%%i
-
-IF NOT "%IMAGE_EXISTS%"=="" (
-    echo Removing existing citron-builder image...
-    docker rmi -f citron-builder
-)
-
 :: Ask user for version
 echo ========================================================
 echo   Choose the version to build:
