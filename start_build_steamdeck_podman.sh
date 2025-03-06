@@ -27,13 +27,13 @@ echo "  Choose the version to build:"
 echo "  1. [Default] Latest master branch (nightly build)"
 echo "  2. Citron Canary Refresh Version 0.5"
 echo "  3. Citron Canary Refresh Version 0.4"
-echo "  4. Specific version (Tag or Branch name)"
+echo "  4. Specific version (Tag, Branch name or Commit Hash)"
 echo "========================================"
 read -rp "Enter choice ([1]/2/3/4): " VERSION_CHOICE
 case "$VERSION_CHOICE" in
     2) CITRON_VERSION="v0.5-canary-refresh" ;;
     3) CITRON_VERSION="v0.4-canary-refresh" ;;
-    4) read -rp "Enter the version (Tag/Branch): " CITRON_VERSION ;;
+    4) read -rp "Enter the version (Tag, Branch or Commit Hash): " CITRON_VERSION ;;
     *) CITRON_VERSION="master" ;;
 esac
 

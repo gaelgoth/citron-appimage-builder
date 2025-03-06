@@ -56,6 +56,15 @@ echo "🛠️ Building Citron (Version: ${CITRON_VERSION}, Mode: ${CITRON_BUILD_
 # Check if CITRON_VERSION exists on the remote repository
 CITRON_REPO="https://git.citron-emu.org/Citron/Citron.git"
 
+# Check if CITRON_VERSION is a commit hash
+if [[ "${CITRON_VERSION}" =~ ^[0-9a-f]{7,40}$ ]]; then
+    echo "🔍 Commit hash detected: ${CITRON_VERSION}"
+    COMMIT_HASH="${CITRON_VERSION}"
+    # Reset CITRON_VERSION to 'master' to later attempt to checkout the commit hash
+    CITRON_VERSION="master"
+    echo "🔍 Resetting Citron Version to 'master' to later checkout commit hash '${COMMIT_HASH}'"
+fi
+
 echo "🔎 Checking if version '${CITRON_VERSION}' exists in the remote repository..."
 
 if ! git ls-remote --exit-code --refs "$CITRON_REPO" "refs/tags/${CITRON_VERSION}" "refs/heads/${CITRON_VERSION}" > /dev/null; then
@@ -63,6 +72,7 @@ if ! git ls-remote --exit-code --refs "$CITRON_REPO" "refs/tags/${CITRON_VERSION
     echo "🔎 Please verify the version or branch name and try again."
     exit 1
 fi
+
 echo "✅ Version '${CITRON_VERSION}' exists in the remote repository."
 
 cd "$WORKING_DIR"
@@ -102,6 +112,15 @@ else
     if [ "$USE_CACHE" = "true" ]; then
         echo "💾 Caching repository to file citron.tar.zst..."
         tar --use-compress-program=zstd -cf "$CACHE_FILE" -C "$WORKING_DIR" Citron
+    fi
+fi
+
+# Try to checkout COMMIT_HASH if it was set
+if [ -n "$COMMIT_HASH" ]; then
+    echo "🔍 Checking out commit hash '${COMMIT_HASH}'..."
+    if ! git checkout "$COMMIT_HASH"; then
+        echo "❌ Error: Failed to checkout commit hash '${COMMIT_HASH}'."
+        exit 1
     fi
 fi
 

@@ -10,7 +10,7 @@ This repository contains scripts to build [Citron](https://git.citron-emu.org/Ci
   - `steamdeck`: Steamdeck mode builds Citron with optimizations for better performance.
   - `compatibility`: Compatibility mode builds Citron with optimizations for older architectures.
   - `debug`: Debug mode includes additional debugging symbols but is slower.
-- Steam Deck starting script (`start_build_steamdeck_podman.sh`) for easier execution on Steam Deck.
+- Steam Deck starting script (`start_build_steamdeck_podman.sh`) for easier execution on Steam Deck without modifying SteamOS.
 - Included Windows batch file (`start_build_windows_wsl.bat`) for automated start with interactive prompt for all options.
 - Outputs a Citron AppImage in the current working directory.
 - Option to output Linux binaries separately.

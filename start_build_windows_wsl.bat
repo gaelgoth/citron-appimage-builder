@@ -43,7 +43,7 @@ echo   Choose the version to build:
 echo   1. [Default] Latest master branch (nightly build)
 echo   2. Citron Canary Refresh Version 0.5
 echo   3. Citron Canary Refresh Version 0.4
-echo   4. Specific version (Tag or Branch name)
+echo   4. Specific version (Tag, Branch name or Commit Hash)
 echo ========================================================
 set /p VERSION_CHOICE="Enter choice ([1]/2/3/4): "
 if "%VERSION_CHOICE%"=="1" (
@@ -53,7 +53,7 @@ if "%VERSION_CHOICE%"=="1" (
 ) else if "%VERSION_CHOICE%"=="3" (
     set CITRON_VERSION=v0.4-canary-refresh
 ) else if "%VERSION_CHOICE%"=="4" (
-    set /p CITRON_VERSION="Enter the version (Tag/Branch): "
+    set /p CITRON_VERSION="Enter the version (Tag, Branch or Commit Hash): "
 ) else (
     echo Defaulting to latest master branch.
     set CITRON_VERSION=master
