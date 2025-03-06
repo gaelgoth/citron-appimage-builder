@@ -118,6 +118,7 @@ fi
 # Try to checkout COMMIT_HASH if it was set
 if [ -n "$COMMIT_HASH" ]; then
     echo "🔍 Checking out commit hash '${COMMIT_HASH}'..."
+    cd "$CLONE_DIR"
     if ! git checkout "$COMMIT_HASH"; then
         echo "❌ Error: Failed to checkout commit hash '${COMMIT_HASH}'."
         exit 1
