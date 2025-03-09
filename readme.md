@@ -10,8 +10,7 @@ This repository contains scripts to build [Citron](https://git.citron-emu.org/Ci
   - `steamdeck`: Steamdeck mode builds Citron with optimizations for better performance.
   - `compatibility`: Compatibility mode builds Citron with optimizations for older architectures.
   - `debug`: Debug mode includes additional debugging symbols but is slower.
-- Steam Deck starting script (`start_build_steamdeck_podman.sh`) for easier execution on Steam Deck without modifying SteamOS.
-- Included Windows batch file (`start_build_windows_wsl.bat`) for automated start with interactive prompt for all options.
+- Included startup scripts for Windows, Steam Deck, Linux, and macOS (`start_build_<OS>...`) that automate the build process with an interactive prompt for all options.
 - Outputs a Citron AppImage in the current working directory.
 - Option to output Linux binaries separately.
 - Option to cache the Citron Git repository for subsequent builds.
@@ -29,14 +28,15 @@ This repository contains scripts to build [Citron](https://git.citron-emu.org/Ci
   ```sh
   podman --version
   ```
-  If not installed, install it from the Software Center.
+  If Podman is not installed, you can install it from the SteamOS Software Center.
 - Sufficient disk space (\~5GB for the build process).
 
 ### Linux / macOS
 
 - [Docker](https://docs.docker.com/get-docker/) installed.
 
-**Note for users on ARM-based devices (e.g., macOS M1/M2 or similar ARM64 platforms):** If you encounter issues during the build process, it may be due to architecture incompatibilities. Try one of the following solutions:
+### **Note for users on ARM-based devices (e.g., macOS M1/M2 or similar ARM64 platforms):**
+If you encounter issues during the build process, it may be due to architecture incompatibilities with the docker image. Try one of the following solutions:
 - Use an ARM64-compatible container image by specifying the platform explicitly:
    ```sh
    docker build --platform=linux/arm64 -t citron-builder .
@@ -47,6 +47,8 @@ This repository contains scripts to build [Citron](https://git.citron-emu.org/Ci
    softwareupdate --install-rosetta
    docker run --platform=linux/amd64 --rm -v "$(pwd)":/output citron-builder
    ```
+
+Any feedback or contributions to improve the script for ARM-based host builds is welcome.
 
 ## Usage
 
@@ -73,7 +75,7 @@ This repository contains scripts to build [Citron](https://git.citron-emu.org/Ci
 
 5. The Citron AppImage file will be created in the current directory.
 
-6. The script will prompt you about optional disk cleanup.
+6. After the build process, the script will prompt you to perform optional disk cleanup.
 
 ### Linux / macOS
 
@@ -86,22 +88,23 @@ This repository contains scripts to build [Citron](https://git.citron-emu.org/Ci
 
    Alternatively, download and extract the repository as a ZIP file.
 
-2. Build and run the Docker container:
-
+2. Make the start script executable:
    ```sh
-   docker build -t citron-builder .
-   docker run --rm -v "$(pwd)":/output citron-builder
+   chmod +x start_build_linux_macOS.sh
    ```
 
-3. Ensure an active internet connection for downloading dependencies.
-
-4. The Citron AppImage file will be created in the current directory.
-
-5. (Optional) Remove the `citron-builder` image to save disk space:
-
+3. Run the linux/macOS build script:
    ```sh
-   docker rmi -f citron-builder
+   ./start_build_linux_macOS.sh
    ```
+
+4. Follow the on-screen prompts to select your build mode and Citron version.
+
+5. Ensure an active internet connection for downloading dependencies.
+
+6. The Citron AppImage file will be created in the current directory.
+
+7. The script will prompt you about optional disk cleanup.
 
 ### Steam Deck (Podman)
 
@@ -132,7 +135,7 @@ This repository contains scripts to build [Citron](https://git.citron-emu.org/Ci
 
 7. Follow the on-screen prompts to select your build mode and Citron version.
 
-8. The Steam Deck may enter sleep mode during the build process. To prevent this, click on the battery icon and then on "Manually block sleep and screen locking".
+8. The Steam Deck may enter sleep mode during the build process. To prevent sleep mode, click the battery icon in the system tray and select "Manually block sleep and screen locking."
 
 9. The Citron AppImage file will be created in the current directory.
 
@@ -140,7 +143,7 @@ This repository contains scripts to build [Citron](https://git.citron-emu.org/Ci
 
 ## Advanced Docker Usage
 
-For users running Docker in Linux or macOS, you can modify the Docker run command accordingly:
+The startup scripts for each OS cover most use cases, but you can manually run the Docker container using the examples below:
 
 - Use the default command for the latest Citron build optimized for Steam Deck:
 
@@ -187,7 +190,7 @@ citron-v0.5-canary-refresh-release.AppImage
 
 ## Troubleshooting
 
-- Verify internet connectivity or possible outages from both the Citron repository and all the external dependencies if the build process fails. Check the [Citron Discord](https://discord.gg/VcSDxrBYUJ) community for more information.
+- If the build process fails, check your internet connection and verify that the Citron repository and external dependencies are accessible. Check the [Citron Discord](https://discord.gg/VcSDxrBYUJ) community for more information.
 
 ## Credits
 
