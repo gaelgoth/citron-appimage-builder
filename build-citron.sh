@@ -65,53 +65,88 @@ if [[ "${CITRON_VERSION}" =~ ^[0-9a-f]{7,40}$ ]]; then
     echo "🔍 Resetting Citron Version to 'master' to later checkout commit hash '${COMMIT_HASH}'"
 fi
 
+# Preparing the citron repository
+# This section checks if the specified Citron version exists in the remote repository.
+# If it doesn't exist, it attempts to use a cached repository if available.
+# If the version exists, it clones or updates the repository accordingly.
 echo "🔎 Checking if version '${CITRON_VERSION}' exists in the remote repository..."
 
-if ! git ls-remote --exit-code --refs "$CITRON_REPO" "refs/tags/${CITRON_VERSION}" "refs/heads/${CITRON_VERSION}" > /dev/null; then
-    echo "❌ Error: The specified version or branch '${CITRON_VERSION}' does not exist in the remote repository."
-    echo "🔎 Please verify the version or branch name and try again."
-    exit 1
-fi
-
-echo "✅ Version '${CITRON_VERSION}' exists in the remote repository."
-
-cd "$WORKING_DIR"
-
-CACHE_FILE="${OUTPUT_DIR}/citron.tar.zst"
+CACHE_FILENAME="citron.tar.zst"
+CACHE_FILE="${OUTPUT_DIR}/${CACHE_FILENAME}"
 CLONE_DIR="${WORKING_DIR}/Citron"
 
-# Clone or use existing cached repository
-if [ "$USE_CACHE" = "true" ] && [ -f "$CACHE_FILE" ]; then
-    echo "📥 Using cached repository citron.tar.zst..."
-    cp --preserve=all "$CACHE_FILE" "$WORKING_DIR/"
+# Check if the specified version exists in the remote repository and is accessible
+if ! git ls-remote --exit-code --refs "$CITRON_REPO" "refs/heads/${CITRON_VERSION}" > /dev/null && ! git ls-remote --exit-code --refs "$CITRON_REPO" "refs/tags/${CITRON_VERSION}" > /dev/null; then
+    echo "⚠️ Warning: The specified version or branch '${CITRON_VERSION}' does not exist in the remote repository or the repository is not accessible."
     
-    # Extract the cached repository
-    tar --use-compress-program=zstd -xf citron.tar.zst -C "$WORKING_DIR"
+    # Check if the cache file exists and use it if available
+    if [ "$USE_CACHE" = "true" ] && [ -f "$CACHE_FILE" ]; then
+        echo "📥 Falling back to cached repository ${CACHE_FILENAME}..."
+        cp --preserve=all "$CACHE_FILE" "$WORKING_DIR/"
+        
+        # Extract the cached repository
+        tar --use-compress-program=zstd -xf "$CACHE_FILENAME" -C "$WORKING_DIR"
 
-    cd "$CLONE_DIR"
-    git config --global --add safe.directory "$CLONE_DIR"
-    
-    # Update the repository to the latest commit of the given version
-    git fetch origin
-    if ! git reset --hard "origin/${CITRON_VERSION}"; then
-        echo "⚠️ Warning: Failed to reset to origin/${CITRON_VERSION}, trying tags/${CITRON_VERSION}..."
-        git checkout "tags/${CITRON_VERSION}"
-    fi
-else
-    echo "📥 Cloning Citron repository..."
-    if ! git clone --recursive "$CITRON_REPO" "$CLONE_DIR"; then
-        echo "❌ Error: Failed to clone the Citron repository."
+        cd "$CLONE_DIR"
+        git config --global --add safe.directory "$CLONE_DIR"
+        
+        # Try to checkout the cached repository with the specified version
+        if ! git checkout "${CITRON_VERSION}" && ! git checkout "tags/${CITRON_VERSION}"; then
+            echo "❌ Error: Failed to checkout the cached repository with version '${CITRON_VERSION}'. Please verify the cache is a valid citron repository and try again."
+            exit 1
+        fi
+    else
+        echo "❌ Error: Cache option not available."
+        echo "🔎 Please verify that ${CACHE_FILENAME} exists in the current directory and is a valid citron repository, enable the use cache option then try again."
         exit 1
     fi
+else
+    echo "✅ Version '${CITRON_VERSION}' exists in the remote repository."
 
-    cd "$CLONE_DIR"
-    git checkout "${CITRON_VERSION}" || git checkout "tags/${CITRON_VERSION}"
-
-    # Cache the repository for future builds if USE_CACHE=true
     cd "$WORKING_DIR"
-    if [ "$USE_CACHE" = "true" ]; then
-        echo "💾 Caching repository to file citron.tar.zst..."
-        tar --use-compress-program=zstd -cf "$CACHE_FILE" -C "$WORKING_DIR" Citron
+
+    # Clone or use existing cached repository
+    if [ "$USE_CACHE" = "true" ] && [ -f "$CACHE_FILE" ]; then
+        echo "📥 Using cached repository ${CACHE_FILENAME}..."
+        cp --preserve=all "$CACHE_FILE" "$WORKING_DIR/"
+        
+        # Extract the cached repository
+        tar --use-compress-program=zstd -xf "$CACHE_FILENAME" -C "$WORKING_DIR"
+
+        cd "$CLONE_DIR"
+        git config --global --add safe.directory "$CLONE_DIR"
+        
+        # Update the repository to the latest commit of the given version, if remote connection fails now, fallback to cached repository
+        echo "🔄 Updating the repository to the latest commit of ${CITRON_VERSION}..."
+        if ! git fetch --all --tags --prune; then
+            echo "⚠️ Warning: Failed to fetch the latest changes from the remote repository. Falling back to the cached repository..."
+            cd "$WORKING_DIR"
+            if ! git checkout "${CITRON_VERSION}" && ! git checkout "tags/${CITRON_VERSION}"; then
+                echo "❌ Error: Failed to checkout the cached repository with version '${CITRON_VERSION}'. Please verify the cache is a valid citron repository and try again."
+                exit 1
+            fi
+        else
+            if ! git reset --hard "origin/${CITRON_VERSION}"; then
+                echo "⚠️ Warning: Failed to reset to origin/${CITRON_VERSION}, trying tags/${CITRON_VERSION}..."
+                git checkout "tags/${CITRON_VERSION}"
+            fi
+        fi
+    else
+        echo "📥 Cloning Citron repository..."
+        if ! git clone --recursive "$CITRON_REPO" "$CLONE_DIR"; then
+            echo "❌ Error: Failed to clone the Citron repository."
+            exit 1
+        fi
+
+        cd "$CLONE_DIR"
+        git checkout "${CITRON_VERSION}" || git checkout "tags/${CITRON_VERSION}"
+
+        # Cache the repository for future builds if USE_CACHE=true
+        cd "$WORKING_DIR"
+        if [ "$USE_CACHE" = "true" ]; then
+            echo "💾 Caching repository to file ${CACHE_FILENAME}..."
+            tar --use-compress-program=zstd -cf "$CACHE_FILE" -C "$WORKING_DIR" Citron
+        fi
     fi
 fi
 
