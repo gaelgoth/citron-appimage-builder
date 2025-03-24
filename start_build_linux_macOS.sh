@@ -128,7 +128,7 @@ fi
 # Ask user if they want to remove the Docker image
 echo "========================================================"
 echo "  Do you want to remove the citron-builder image "
-echo "  to save disk space? (Y/n)"
+echo "  to save disk space? ([Y]/n)"
 echo "========================================================"
 read -p "Enter choice: " DELETE_IMAGE
 if [[ -z "$DELETE_IMAGE" || "$DELETE_IMAGE" =~ ^[Yy]$ ]]; then

@@ -83,7 +83,7 @@ podman run --rm \
 
 # Ask the user if they want to delete the Podman image
 echo "========================================"
-echo "  Do you want to remove the $IMAGE_NAME image to save disk space? (Y/n)"
+echo "  Do you want to remove the $IMAGE_NAME image to save disk space? ([Y]/n)"
 echo "========================================"
 read -rp "Enter choice: " DELETE_IMAGE
 if [[ -z "$DELETE_IMAGE" || "$DELETE_IMAGE" =~ ^[Yy]$ ]]; then

@@ -114,7 +114,7 @@ docker run --rm -e CITRON_VERSION=%CITRON_VERSION% -e CITRON_BUILD_MODE=%CITRON_
 echo.
 echo ==================================================
 echo   Do you want to remove the citron-builder image  
-echo   to save disk space? (Y/n)                     
+echo   to save disk space? ([Y]/n)                     
 echo ==================================================
 echo.
 set /p DELETE_IMAGE="Enter choice: "

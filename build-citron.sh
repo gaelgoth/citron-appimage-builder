@@ -5,10 +5,10 @@ set -e  # Exit on error
 # Citron Build Script
 # ============================================
 # This script:
-# - Clones or updates the Citron repository
+# - Clones or updates the official Citron repository
 # - Checks out a specific version (default: master)
 # - Builds Citron using CMake and Ninja
-# - Creates an AppImage package
+# - Creates an AppImage package using appimagetool-x86_64.AppImage
 # - Saves the output to OUTPUT_DIR
 # ============================================
 # # ============================================

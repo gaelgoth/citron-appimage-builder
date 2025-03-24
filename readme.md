@@ -1,26 +1,26 @@
 # Citron AppImage Builder
 
-This repository contains scripts to build [Citron](https://git.citron-emu.org/Citron/Citron) using either an Arch Linux Docker container or a Podman container for Steam Deck. It automates the process of setting up a clean environment and generating a Citron AppImage with support for multiple build modes.
+This repository contains scripts to build [Citron](https://git.citron-emu.org/Citron/Citron) using an Arch Linux container. It automates the process of setting up a clean environment and generating a Citron AppImage with support for multiple build modes.
 
 ## Features
 
 - Uses Docker or Podman to provide a consistent build environment.
 - Supports multiple build modes:
-  - `release`: Release mode builds Citron with optimizations for better performance.
-  - `steamdeck`: Steamdeck mode builds Citron with optimizations for better performance.
+  - `release`: Release mode builds Citron with optimizations based on the device that you are building for better performance.
+  - `steamdeck`: Steamdeck mode builds Citron with Steam Deck’s CPU (AMD Van Gogh - Zen 2) optimizations for better performance.
   - `compatibility`: Compatibility mode builds Citron with optimizations for older architectures.
   - `debug`: Debug mode includes additional debugging symbols but is slower.
 - Included startup scripts for Windows, Steam Deck, Linux, and macOS (`start_build_<OS>...`) that automate the build process with an interactive prompt for all options.
 - Outputs a Citron AppImage in the current working directory.
-- Option to output Linux binaries separately.
-- Option to cache the Citron Git repository for subsequent builds.
+- Option to output Linux binaries.
+- Option to cache the Citron Git repository to speed up subsequent builds or as a fallback.
 
 ## Requirements
 
 ### Windows
 
-- [Docker Desktop for Windows](https://docs.docker.com/desktop/setup/install/windows-install/) installed and running on your system.
 - Windows Subsystem for Linux (WSL) installed and enabled.
+- [Docker Desktop for Windows](https://docs.docker.com/desktop/setup/install/windows-install/) installed and running on your system.
 
 ### Steam Deck
 
@@ -33,7 +33,7 @@ This repository contains scripts to build [Citron](https://git.citron-emu.org/Ci
 
 ### Linux / macOS
 
-- [Docker](https://docs.docker.com/get-docker/) installed.
+- [Docker](https://docs.docker.com/get-docker/) installed with Docker Desktop and/or Docker Engine running.
 
 ### **Note for users on ARM-based devices (e.g., macOS M1/M2 or similar ARM64 platforms):**
 If you encounter issues during the build process, it may be due to architecture incompatibilities with the docker image. Try one of the following solutions:
@@ -176,7 +176,7 @@ The startup scripts for each OS cover most use cases, but you can manually run t
 
 ## Output Naming
 
-The generated AppImage filename will follow this format:
+The [generated AppImage](https://drive.google.com/drive/folders/1OcB-CffpyZ3bVbi751FJdNLCCSE1K-Rf) filename will follow this format:
 
 - **Latest builds:** `citron-nightly-<build_mode>-<timestamp>-<commit_hash>.AppImage`
 - **Versioned builds:** `citron-<version>-<build_mode>.AppImage`
@@ -190,11 +190,12 @@ citron-v0.5-canary-refresh-release.AppImage
 
 ## Troubleshooting
 
-- If the build process fails, check your internet connection and verify that the Citron repository and external dependencies are accessible. Check the [Citron Discord](https://discord.gg/VcSDxrBYUJ) community for more information.
+- If the build process fails, check your internet connection and verify that the external dependencies are accessible. Check the [Citron Discord](https://discord.gg/VcSDxrBYUJ) community for more information.
+- If you are not using cache, check that the [Citron repository](https://git.citron-emu.org/Citron/Citron) is available and online.
 
 ## Credits
 
-This script was created with the help of the [Citron Wiki](https://git.citron-emu.org/Citron/Citron/wiki/?action=_pages) and members of the [Citron Discord](https://discord.gg/VcSDxrBYUJ) community.
+This script was created with the help of the [Citron Wiki](https://git.citron-emu.org/Citron/Citron/wiki/?action=_pages) and members of the [Citron Discord](https://discord.gg/VcSDxrBYUJ) community. This project does not make modified versions of [Citron](https://git.citron-emu.org/Citron/Citron).
 
 ## License
 
