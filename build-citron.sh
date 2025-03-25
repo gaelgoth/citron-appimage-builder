@@ -126,6 +126,7 @@ else
                 exit 1
             fi
         else
+            git submodule update --init --recursive # Update submodules
             if ! git reset --hard "origin/${CITRON_VERSION}"; then
                 echo "⚠️ Warning: Failed to reset to origin/${CITRON_VERSION}, trying tags/${CITRON_VERSION}..."
                 git checkout "tags/${CITRON_VERSION}"
