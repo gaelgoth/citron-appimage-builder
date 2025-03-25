@@ -114,7 +114,7 @@ docker run --rm -e CITRON_VERSION=%CITRON_VERSION% -e CITRON_BUILD_MODE=%CITRON_
 echo.
 echo ==================================================
 echo   Do you want to remove the citron-builder image  
-echo   to save disk space? ([Y]/n)                     
+echo   to save disk space? ^(Y/n^)                     
 echo ==================================================
 echo.
 set /p DELETE_IMAGE="Enter choice: "
@@ -141,7 +141,7 @@ if exist citron.tar.zst (
     echo.
     echo ==================================================
     echo   Do you want to delete the cached repository 
-    echo   file citron.tar.zst to free up space? (y/[N])
+    echo   file citron.tar.zst to free up space? ^(y/N^)
     echo ==================================================
     echo.
     set /p DELETE_CACHE="Enter choice: "
