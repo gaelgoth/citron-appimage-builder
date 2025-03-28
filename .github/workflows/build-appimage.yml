@@ -1,0 +1,37 @@
+name: Build Citron AppImage
+
+on:
+  workflow_dispatch
+
+jobs:
+  build-appimage:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Set up Docker
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v3
+
+      # Run the build script
+      - name: Build Citron AppImage
+        run: |
+          chmod +x ./start_build_linux_macOS.sh
+          ./start_build_linux_macOS.sh <<EOF
+          1 # Select default version (master branch)
+          1 # Select SteamDeck optimizations
+          2 # Do not cache the Git repository
+          2 # Do not output Linux binaries
+          n # Do not remove the Docker image
+          n # Do not delete the cached repository
+          EOF
+
+      # Upload the output AppImage as an artifact
+      - name: Upload AppImage
+        uses: actions/upload-artifact@v4
+        with:
+          name: Citron-AppImage
+          path: ./output/*.AppImage
